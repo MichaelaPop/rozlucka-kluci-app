@@ -246,13 +246,15 @@ function setupPage(participantName) {
     // Event for completing main task
     checkbox.addEventListener('change', function () {
       if (checkbox.checked) {
+        // Add points when the main task is completed
         updateScore(participantName, task.points);
         if (messageEl) messageEl.textContent = getRandomMessage();
         // Show flame icon and confetti when main task is completed
         statusSpan.textContent = '🔥';
         showConfetti();
       } else {
-        // Remove flame icon when task is unchecked
+        // Remove points when main task is unchecked and remove flame
+        updateScore(participantName, -task.points);
         statusSpan.textContent = '';
       }
     });
