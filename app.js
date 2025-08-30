@@ -206,6 +206,20 @@ function setupPage(participantName) {
   if (!tasksContainer) return;
   // Clear any existing tasks
   tasksContainer.innerHTML = '';
+  // Determine the database key for this participant and maximum points for progress bar
+  const dbKey = nameKeyMap[participantName] || participantName;
+  const maxPoints = tasks.reduce((sum, t) => sum + (t.points || 0), 0);
+  // Set up progress bar updates for this player
+  const progressBarEl = document.getElementById('progress-bar');
+  const scoreDisplayEl = document.getElementById('score-display');
+  if (progressBarEl || scoreDisplayEl) {
+    database.ref('scores/' + dbKey).on('value', function (snap) {
+      const sc = snap.val() || 0;
+      const percent = maxPoints > 0 ? Math.min(100, (sc / maxPoints) * 100) : 0;
+      if (progressBarEl) progressBarEl.style.width = percent + '%';
+      if (scoreDisplayEl) scoreDisplayEl.textContent = sc + ' / ' + maxPoints + ' bodů';
+    });
+  }
   tasks.forEach(function (task, idx) {
     // Main task element
     const taskDiv = document.createElement('div');
@@ -261,13 +275,12 @@ function setupPage(participantName) {
       subPtsSpan.className = 'points';
       subPtsSpan.textContent = ` (+${subPoints})`;
       subLabel.appendChild(subPtsSpan);
-      // Status icon (flame) for subtask completion
-      const subStatusSpan = document.createElement('span');
-      subStatusSpan.className = 'status-icon';
-      subStatusSpan.textContent = '';
-      subLabel.appendChild(subStatusSpan);
+      // Container to hold flame icons indicating repeated completions
+      const flamesContainer = document.createElement('div');
+      flamesContainer.className = 'flames-container';
       subTaskDiv.appendChild(subCheckbox);
       subTaskDiv.appendChild(subLabel);
+      subTaskDiv.appendChild(flamesContainer);
       tasksContainer.appendChild(subTaskDiv);
       // When the main checkbox is toggled, show or hide the subtask
       checkbox.addEventListener('change', function () {
@@ -276,21 +289,48 @@ function setupPage(participantName) {
         } else {
           subTaskDiv.style.display = 'none';
           subCheckbox.checked = false;
-          // remove flame icon when hiding
-          subStatusSpan.textContent = '';
         }
+      });
+      // Reference for repeat counts for this subtask
+      const repeatTaskRef = database.ref('repeatCounts/' + dbKey + '/' + idx);
+      // Render flame icons based on count
+      function renderFlames(count) {
+        flamesContainer.innerHTML = '';
+        for (let j = 0; j < count; j++) {
+          const flameEl = document.createElement('span');
+          flameEl.className = 'status-icon';
+          flameEl.textContent = '🔥';
+          flameEl.style.cursor = 'pointer';
+          // Clicking on a flame removes one completion and subtracts points
+          flameEl.addEventListener('click', function () {
+            repeatTaskRef.transaction(function (current) {
+              if (current && current > 0) {
+                updateScore(participantName, -subPoints);
+                return current - 1;
+              }
+              return current;
+            });
+          });
+          flamesContainer.appendChild(flameEl);
+        }
+      }
+      // Listen for changes to repeat count and update flames
+      repeatTaskRef.on('value', function (snap) {
+        const count = snap.val() || 0;
+        renderFlames(count);
       });
       // Event for subtask completion: only award points if main is done
       subCheckbox.addEventListener('change', function () {
         if (subCheckbox.checked && checkbox.checked) {
+          // Increment repeat count atomically and add points; confetti
+          repeatTaskRef.transaction(function (current) {
+            return (current || 0) + 1;
+          });
           updateScore(participantName, subPoints);
           if (messageEl) messageEl.textContent = getRandomMessage();
-          // Show flame and confetti for subtask
-          subStatusSpan.textContent = '🔥';
           showConfetti();
-          // Optionally uncheck subCheckbox to allow repeated scoring? Here we keep it checked until manual uncheck
-        } else {
-          subStatusSpan.textContent = '';
+          // reset checkbox to allow further completions
+          subCheckbox.checked = false;
         }
       });
     }
@@ -303,3 +343,20 @@ function setupPage(participantName) {
 window.loadTasks = loadTasks;
 window.loadMessages = loadMessages;
 window.setupPage = setupPage;
+
+/**
+ * Reset scores and repeat counts for all players. Sets every player's score to 0
+ * and clears repeatCounts. Use with caution!
+ */
+function resetScores() {
+  players.forEach(function (name) {
+    const key = nameKeyMap[name] || name;
+    // Reset score to 0
+    database.ref('scores/' + key).set(0);
+    // Clear repeat counts
+    database.ref('repeatCounts/' + key).set(null);
+  });
+}
+
+// Expose resetScores globally so it can be called from the browser console or buttons
+window.resetScores = resetScores;

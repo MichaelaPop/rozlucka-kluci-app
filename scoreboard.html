@@ -24,13 +24,24 @@
         </thead>
         <tbody id="scoreboard-body"></tbody>
       </table>
+      <!-- Button to reset all players' scores -->
+      <button id="reset-button" class="reset-button">Resetovat skóre</button>
     </div>
   </div>
   <script>
-    // Initialise tasks and messages then render the scoreboard
+    // Initialise tasks and messages then render the scoreboard. After rendering,
+    // attach handler to reset button which calls resetScores() upon confirmation.
     loadTasks().then(() => {
       loadMessages().then(() => {
         renderScoreboard();
+        const resetBtn = document.getElementById('reset-button');
+        if (resetBtn) {
+          resetBtn.addEventListener('click', function () {
+            if (confirm('Opravdu chceš vynulovat skóre?')) {
+              resetScores();
+            }
+          });
+        }
       });
     });
   </script>
