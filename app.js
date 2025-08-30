@@ -39,11 +39,11 @@ const nameKeyMap = {
 // These filenames match the existing image files in the GitHub repository (e.g. Tom.png).
 // Mapping of display names to avatar images stored in the repository root.  For
 // Míra we reference the file with the accented name to match the uploaded file
-// in the repository.  If you rename the image without diacritics (e.g. Mira.png),
+// in the repository.  If you rename the image without diacritics (e.g. mira_photo.png),
 // update this mapping accordingly.
 const playerImages = {
   "Tom": "Tom.png",
-  "Míra": "Míra.png",
+  "Míra": "mira_photo.png",
   "Martin": "Martin.png",
   "Lukáš": "Lukas.png",
   "Vláďa": "Vlada.png"
