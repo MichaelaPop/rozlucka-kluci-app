@@ -43,7 +43,7 @@ const nameKeyMap = {
 // update this mapping accordingly.
 const playerImages = {
   "Tom": "Tom.png",
-  "Míra": "Mira.png",
+  "Míra": "Míra.png",
   "Martin": "Martin.png",
   "Lukáš": "Lukas.png",
   "Vláďa": "Vlada.png"
@@ -52,6 +52,39 @@ const playerImages = {
 // Containers for tasks and motivational messages
 let tasks = [];
 let messages = [];
+
+/**
+ * Show a simple confetti animation. Creates a fixed container with multiple
+ * small colored rectangles that fall from the top of the screen. After
+ * a few seconds the container is removed. Used to celebrate task completion.
+ */
+function showConfetti() {
+  const container = document.createElement('div');
+  container.className = 'confetti-container';
+  // Create 30 confetti pieces
+  for (let i = 0; i < 30; i++) {
+    const confetto = document.createElement('div');
+    confetto.className = 'confetto';
+    // Random horizontal start position
+    confetto.style.left = Math.random() * 100 + '%';
+    // Random animation duration between 2 and 4 seconds
+    confetto.style.animationDuration = (2 + Math.random() * 2) + 's';
+    // Random color
+    confetto.style.backgroundColor = getRandomColor();
+    container.appendChild(confetto);
+  }
+  document.body.appendChild(container);
+  // Remove the container after the animation finishes
+  setTimeout(() => {
+    container.remove();
+  }, 5000);
+}
+
+// Helper to get a random bright color for confetti pieces
+function getRandomColor() {
+  const colors = ['#FF5722', '#FFC107', '#8BC34A', '#00BCD4', '#9C27B0'];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
 
 /**
  * Load tasks from tasks.json. Each task has the following fields:
@@ -188,6 +221,11 @@ function setupPage(participantName) {
     pointsSpan.className = 'points';
     pointsSpan.textContent = ` (+${task.points})`;
     label.appendChild(pointsSpan);
+    // Status icon (flame) shown when this task is completed
+    const statusSpan = document.createElement('span');
+    statusSpan.className = 'status-icon';
+    statusSpan.textContent = '';
+    label.appendChild(statusSpan);
     taskDiv.appendChild(checkbox);
     taskDiv.appendChild(label);
     tasksContainer.appendChild(taskDiv);
@@ -196,6 +234,12 @@ function setupPage(participantName) {
       if (checkbox.checked) {
         updateScore(participantName, task.points);
         if (messageEl) messageEl.textContent = getRandomMessage();
+        // Show flame icon and confetti when main task is completed
+        statusSpan.textContent = '🔥';
+        showConfetti();
+      } else {
+        // Remove flame icon when task is unchecked
+        statusSpan.textContent = '';
       }
     });
     // If there is a subtask, add subtask checkbox underneath (hidden until main task is done)
@@ -217,6 +261,11 @@ function setupPage(participantName) {
       subPtsSpan.className = 'points';
       subPtsSpan.textContent = ` (+${subPoints})`;
       subLabel.appendChild(subPtsSpan);
+      // Status icon (flame) for subtask completion
+      const subStatusSpan = document.createElement('span');
+      subStatusSpan.className = 'status-icon';
+      subStatusSpan.textContent = '';
+      subLabel.appendChild(subStatusSpan);
       subTaskDiv.appendChild(subCheckbox);
       subTaskDiv.appendChild(subLabel);
       tasksContainer.appendChild(subTaskDiv);
@@ -227,6 +276,8 @@ function setupPage(participantName) {
         } else {
           subTaskDiv.style.display = 'none';
           subCheckbox.checked = false;
+          // remove flame icon when hiding
+          subStatusSpan.textContent = '';
         }
       });
       // Event for subtask completion: only award points if main is done
@@ -234,6 +285,12 @@ function setupPage(participantName) {
         if (subCheckbox.checked && checkbox.checked) {
           updateScore(participantName, subPoints);
           if (messageEl) messageEl.textContent = getRandomMessage();
+          // Show flame and confetti for subtask
+          subStatusSpan.textContent = '🔥';
+          showConfetti();
+          // Optionally uncheck subCheckbox to allow repeated scoring? Here we keep it checked until manual uncheck
+        } else {
+          subStatusSpan.textContent = '';
         }
       });
     }

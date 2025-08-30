@@ -159,6 +159,43 @@ h2 {
   margin-right: 8px;
 }
 
+/* Status icon (flame) shown when a task or subtask is completed */
+.status-icon {
+  margin-left: 6px;
+  font-size: 1.2em;
+}
+
+/* Confetti animation */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.confetti-container .confetto {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  opacity: 0.8;
+  animation-name: confetti-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+}
+
+@keyframes confetti-fall {
+  from {
+    transform: translateY(-10vh) rotate(0deg);
+  }
+  to {
+    transform: translateY(100vh) rotate(360deg);
+  }
+}
+
 /* Crown icon styling for top scorer in the scoreboard */
 .crown-icon {
   margin-left: 4px;
