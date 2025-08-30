@@ -43,7 +43,7 @@ const nameKeyMap = {
 // update this mapping accordingly.
 const playerImages = {
   "Tom": "Tom.png",
-  "Míra": "Míra.png",
+  "Míra": "Mira.png",
   "Martin": "Martin.png",
   "Lukáš": "Lukas.png",
   "Vláďa": "Vlada.png"
