@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rozlučka – Přehled úkolů</title>
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- Shared styles -->
+  <link rel="stylesheet" href="style.css" />
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-database.js"></script>
+  <!-- App logic -->
+  <script src="app.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Přehled úkolů podle hráčů</h1>
+    <div id="logs-container"></div>
+  </div>
+  <script>
+    // After tasks are loaded, listen for logs and render them
+    loadTasks().then(() => {
+      database.ref('logs').on('value', function (snapshot) {
+        const logsData = snapshot.val() || {};
+        const container = document.getElementById('logs-container');
+        container.innerHTML = '';
+        players.forEach(function (name) {
+          const key = nameKeyMap[name] || name;
+          const playerLogs = logsData[key] || {};
+          // Create a card for each player
+          const card = document.createElement('div');
+          card.className = 'card';
+          const header = document.createElement('h2');
+          header.textContent = name;
+          card.appendChild(header);
+          const list = document.createElement('ul');
+          // For each task in tasks list, show count if exists
+          tasks.forEach(function (task) {
+            const count = playerLogs[task.id] || 0;
+            if (count > 0) {
+              const li = document.createElement('li');
+              li.textContent = task.text + ' – ' + count + '×';
+              list.appendChild(li);
+            }
+          });
+          if (list.children.length === 0) {
+            const p = document.createElement('p');
+            p.textContent = 'Zatím nezískal žádné body.';
+            card.appendChild(p);
+          } else {
+            card.appendChild(list);
+          }
+          container.appendChild(card);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

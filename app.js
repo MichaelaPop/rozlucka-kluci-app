@@ -146,6 +146,24 @@ function updateScore(playerName, points) {
 }
 
 /**
+ * Log a task completion for a player. Adds the delta (positive or negative)
+ * to the logs path. Ensures the log count never goes below zero.
+ * This function records how many times a player has earned points for a given task.
+ * @param {string} playerName Display name of player
+ * @param {number} taskId ID of the task (from tasks.json)
+ * @param {number} delta Increment to apply (+1 for completion, -1 for removal)
+ */
+function logTaskCompletion(playerName, taskId, delta) {
+  const key = nameKeyMap[playerName] || playerName;
+  const ref = database.ref('logs/' + key + '/' + taskId);
+  ref.transaction(function (current) {
+    const newVal = (current || 0) + delta;
+    if (newVal < 0) return 0;
+    return newVal;
+  });
+}
+
+/**
  * Render the live scoreboard. Listens for updates on the 'scores' path and
  * updates the table with avatars, names, and current scores.
  */
@@ -255,6 +273,8 @@ function setupPage(participantName) {
       if (checkbox.checked) {
         // Add points when the main task is completed
         updateScore(participantName, task.points);
+        // Log this completion (increment log)
+        logTaskCompletion(participantName, task.id, +1);
         if (messageEl) messageEl.textContent = getRandomMessage();
         // Show flame icon and confetti when main task is completed
         statusSpan.textContent = '🔥';
@@ -262,6 +282,8 @@ function setupPage(participantName) {
       } else {
         // Remove points when main task is unchecked and remove flame
         updateScore(participantName, -task.points);
+        // Log removal of this completion (decrement log)
+        logTaskCompletion(participantName, task.id, -1);
         statusSpan.textContent = '';
       }
     });
@@ -312,13 +334,16 @@ function setupPage(participantName) {
           flameEl.style.cursor = 'pointer';
           // Clicking on a flame removes one completion and subtracts points
           flameEl.addEventListener('click', function () {
+            // Decrement the repeat count atomically
             repeatTaskRef.transaction(function (current) {
               if (current && current > 0) {
-                updateScore(participantName, -subPoints);
                 return current - 1;
               }
               return current;
             });
+            // Subtract the subtask points and decrement the log count
+            updateScore(participantName, -subPoints);
+            logTaskCompletion(participantName, task.id, -1);
           });
           flamesContainer.appendChild(flameEl);
         }
@@ -331,11 +356,14 @@ function setupPage(participantName) {
       // Event for subtask completion: only award points if main is done
       subCheckbox.addEventListener('change', function () {
         if (subCheckbox.checked && checkbox.checked) {
-          // Increment repeat count atomically and add points; confetti
+          // Increment repeat count atomically
           repeatTaskRef.transaction(function (current) {
             return (current || 0) + 1;
           });
+          // Add points for this subtask completion
           updateScore(participantName, subPoints);
+          // Log this completion (increment log)
+          logTaskCompletion(participantName, task.id, +1);
           if (messageEl) messageEl.textContent = getRandomMessage();
           showConfetti();
           // reset checkbox to allow further completions
