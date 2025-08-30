@@ -23,7 +23,9 @@ if (typeof firebase !== 'undefined' && (!firebase.apps || firebase.apps.length =
 const database = firebase.database();
 
 // List of participants (with display names) for scoreboard
-const players = ["Tom", "Míra", "Martin", "Lukáš", "Vláďa"];
+// List of participants (with display names) for scoreboard
+// Added "Marty" as an additional participant at the end
+const players = ["Tom", "Míra", "Martin", "Lukáš", "Vláďa", "Marty"];
 
 // Mapping of display names to database keys (without diacritics)
 const nameKeyMap = {
@@ -31,7 +33,9 @@ const nameKeyMap = {
   "Míra": "Mira",
   "Martin": "Martin",
   "Lukáš": "Lukas",
-  "Vláďa": "Vlada"
+  "Vláďa": "Vlada",
+  // Key mapping for new participant Marty
+  "Marty": "Marty"
 };
 
 // Mapping of display names to avatar images
@@ -39,14 +43,17 @@ const nameKeyMap = {
 // These filenames match the existing image files in the GitHub repository (e.g. Tom.png).
 // Mapping of display names to avatar images stored in the repository root.  For
 // Míra we reference the file with the accented name to match the uploaded file
-// in the repository.  If you rename the image without diacritics (e.g. mira_photo.png),
+// in the repository.  If you rename the image without diacritics (e.g. Mira.png),
 // update this mapping accordingly.
 const playerImages = {
   "Tom": "Tom.png",
-  "Míra": "mira_photo.png",
+  // Míra's image renamed to mira-photo.png
+  "Míra": "mira-photo.png",
   "Martin": "Martin.png",
   "Lukáš": "Lukas.png",
-  "Vláďa": "Vlada.png"
+  "Vláďa": "Vlada.png",
+  // Image for new participant Marty
+  "Marty": "Marty.png"
 };
 
 // Containers for tasks and motivational messages

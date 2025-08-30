@@ -3,25 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rozlučka – Míra</title>
+  <title>Rozlučka – Marty</title>
+  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- Custom styles -->
   <link rel="stylesheet" href="style.css" />
+  <!-- Firebase libraries -->
   <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-database.js"></script>
+  <!-- App logic -->
   <script src="app.js"></script>
 </head>
 <body>
   <div class="container">
+    <!-- Header with avatar and participant name -->
     <div class="header-container">
-      <!-- Updated Míra's avatar to mira-photo.png -->
-      <img src="mira-photo.png" alt="Míra" class="avatar-large" />
-      <h1>Rozlučka – <span id="participant-name">Míra</span></h1>
+      <img src="Marty.png" alt="Marty" class="avatar-large" />
+      <h1>Rozlučka – <span id="participant-name">Marty</span></h1>
     </div>
+    <!-- Card with tasks and motivational message -->
     <div class="card">
       <h2>Úkoly</h2>
       <div id="tasks-list"></div>
       <div id="motivational-message" class="message"></div>
     </div>
+    <!-- Card with scoreboard -->
     <div class="card">
       <h2>Skóre</h2>
       <!-- Progress bar showing player's total points as a proportion of max points -->
@@ -36,9 +42,10 @@
     </div>
   </div>
   <script>
+    // Wait for tasks and messages to load then set up the page for Marty
     loadTasks().then(() => {
       loadMessages().then(() => {
-        setupPage('Míra');
+        setupPage('Marty');
       });
     });
   </script>

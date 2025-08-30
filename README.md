@@ -9,16 +9,16 @@ Každý účastník má vlastní stránku s úkoly a sdílený živý žebříč
 | Soubor/Složka       | Účel |
 |---------------------|------|
 | **index.html**      | Úvodní stránka se seznamem účastníků. Každá karta vede na osobní stránku hráče. |
-| **tom.html** … **vlada.html** | Osobní stránky hráčů (Tom, Míra, Martin, Lukáš, Vláďa). Načítají úkoly a zobrazují žebříček. |
+| **tom.html** … **marty.html** | Osobní stránky hráčů (Tom, Míra, Martin, Lukáš, Vláďa, Marty). Načítají úkoly a zobrazují žebříček. |
 | **style.css**       | Sdílené styly (tmavá paleta, červené akcenty, vzhled karet, avatarů atd.). |
 | **app.js**          | Logika aplikace: načítá úkoly a hlášky z JSON, inicializuje Firebase Realtime Database a aktualizuje skóre. |
 | **tasks.json**      | Seznam úkolů s bodovým ohodnocením a volitelným podúkolem. |
 | **messages.json**   | Povzbuzující hlášky, které se náhodně zobrazují po splnění úkolu. |
-| **avatars/**        | Složka pro obrázky účastníků. Soubor musí být pojmenován bez diakritiky stejně jako klíč v aplikaci (např. `tom.png`, `mira.png`). |
+| **Obrázky účastníků** | Avatar obrázky hráčů jsou uloženy v kořenovém adresáři repozitáře a jejich názvy odpovídají klíčům v `app.js` (např. `Tom.png`, `mira-photo.png`, `Martin.png`, `Lukas.png`, `Vlada.png`, `Marty.png`). |
 
 ## Lokální spuštění
 
-1. Zkontrolujte, že ve složce `avatars/` jsou obrázky všech účastníků pojmenované bez diakritiky (`tom.png`, `mira.png`, `martin.png`, `lukas.png`, `vlada.png`). Pokud obrázky nemáte, můžete použít zástupné obrázky nebo je nahradit později.
+1. Zkontrolujte, že v kořenovém adresáři repozitáře se nacházejí avatar obrázky všech účastníků (`Tom.png`, `mira-photo.png`, `Martin.png`, `Lukas.png`, `Vlada.png`, `Marty.png`). Pokud obrázky nemáte, můžete použít zástupné obrázky nebo je nahradit později.
 2. Otevřete soubor `index.html` v moderním webovém prohlížeči.  
 3. Kliknutím na kartu hráče přejdete na jeho stránku. Úkoly a žebříček budou funkční i bez Firebase – body se však nebudou ukládat mezi relacemi.
 
