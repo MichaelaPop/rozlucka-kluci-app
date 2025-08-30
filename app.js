@@ -37,9 +37,13 @@ const nameKeyMap = {
 // Mapping of display names to avatar images
 // Mapping of display names to avatar images stored in the repository root.
 // These filenames match the existing image files in the GitHub repository (e.g. Tom.png).
+// Mapping of display names to avatar images stored in the repository root.  For
+// Míra we reference the file with the accented name to match the uploaded file
+// in the repository.  If you rename the image without diacritics (e.g. Mira.png),
+// update this mapping accordingly.
 const playerImages = {
   "Tom": "Tom.png",
-  "Míra": "Mira.png",
+  "Míra": "Míra.png",
   "Martin": "Martin.png",
   "Lukáš": "Lukas.png",
   "Vláďa": "Vlada.png"
@@ -110,6 +114,13 @@ function renderScoreboard() {
   if (!tbody) return;
   database.ref('scores').on('value', function (snapshot) {
     const data = snapshot.val() || {};
+    // Determine the highest score among all players
+    let maxScore = 0;
+    players.forEach(function (name) {
+      const key = nameKeyMap[name];
+      const sc = data[key] || 0;
+      if (sc > maxScore) maxScore = sc;
+    });
     // Clear existing rows
     tbody.innerHTML = '';
     players.forEach(function (name) {
@@ -123,6 +134,13 @@ function renderScoreboard() {
       avatarImg.className = 'avatar-small';
       const span = document.createElement('span');
       span.textContent = name;
+      // If this player has the highest score, show a crown after their name
+      if (score === maxScore && maxScore > 0) {
+        const crown = document.createElement('span');
+        crown.textContent = ' 👑';
+        crown.className = 'crown-icon';
+        span.appendChild(crown);
+      }
       nameTd.appendChild(avatarImg);
       nameTd.appendChild(span);
       const scoreTd = document.createElement('td');
@@ -180,11 +198,13 @@ function setupPage(participantName) {
         if (messageEl) messageEl.textContent = getRandomMessage();
       }
     });
-    // If there is a subtask, add subtask checkbox underneath
+    // If there is a subtask, add subtask checkbox underneath (hidden until main task is done)
     if (task.subtask) {
       const subTaskDiv = document.createElement('div');
       subTaskDiv.className = 'task-item';
       subTaskDiv.style.marginLeft = '20px';
+      // hide subtask by default
+      subTaskDiv.style.display = 'none';
       const subCheckbox = document.createElement('input');
       subCheckbox.type = 'checkbox';
       subCheckbox.id = 'subtask-' + idx;
@@ -200,9 +220,18 @@ function setupPage(participantName) {
       subTaskDiv.appendChild(subCheckbox);
       subTaskDiv.appendChild(subLabel);
       tasksContainer.appendChild(subTaskDiv);
-      // Event for subtask completion
+      // When the main checkbox is toggled, show or hide the subtask
+      checkbox.addEventListener('change', function () {
+        if (checkbox.checked) {
+          subTaskDiv.style.display = 'block';
+        } else {
+          subTaskDiv.style.display = 'none';
+          subCheckbox.checked = false;
+        }
+      });
+      // Event for subtask completion: only award points if main is done
       subCheckbox.addEventListener('change', function () {
-        if (subCheckbox.checked) {
+        if (subCheckbox.checked && checkbox.checked) {
           updateScore(participantName, subPoints);
           if (messageEl) messageEl.textContent = getRandomMessage();
         }

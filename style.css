@@ -159,6 +159,12 @@ h2 {
   margin-right: 8px;
 }
 
+/* Crown icon styling for top scorer in the scoreboard */
+.crown-icon {
+  margin-left: 4px;
+  font-size: 1.2em;
+}
+
 .player-cell {
   display: flex;
   align-items: center;
