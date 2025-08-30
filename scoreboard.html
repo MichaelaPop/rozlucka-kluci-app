@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rozlučka – Skóre</title>
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- Shared styles -->
+  <link rel="stylesheet" href="style.css" />
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-database.js"></script>
+  <!-- App logic -->
+  <script src="app.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Skóre</h1>
+    <div class="card">
+      <table id="scoreboard">
+        <thead>
+          <tr><th>Jméno</th><th>Body</th></tr>
+        </thead>
+        <tbody id="scoreboard-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    // Initialise tasks and messages then render the scoreboard
+    loadTasks().then(() => {
+      loadMessages().then(() => {
+        renderScoreboard();
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,63 +1,60 @@
-# Rozlučka pro kluky – aplikace
+# Rozlučka pro kluky – multi‑page aplikace
 
-Tento repozitář obsahuje jednoduchou webovou aplikaci pro **rozlučku se svobodou** pro kluky.  
-Aplikace zobrazuje seznam úkolů, umožňuje zaznamenat splněné úkoly jednotlivými hráči a zobrazuje průběžný žebříček.
+Tento repozitář obsahuje více‑stránkovou webovou aplikaci pro **rozlučku se svobodou** pro kluky.  
+Aplikace vychází z dívčí verze, ale používá tmavé barvy, jiné úkoly a hlášky, a pracuje se stejným principem bodovaného žebříčku.  
+Každý účastník má vlastní stránku s úkoly a sdílený živý žebříček.
 
-## Součásti
+## Struktura projektu
 
-* **index.html** – hlavní stránka aplikace.  
-  Načítá seznam úkolů a povzbuzujících vět ze souborů `tasks.json` a `messages.json`, zobrazuje je a umožňuje přidělovat body hráčům.  
-  V souboru je připravený kód pro propojení s Firebase Realtime Database; před nasazením je potřeba doplnit `firebaseConfig`.
-* **tasks.json** – seznam úkolů včetně bodového ohodnocení a případných podúkolů.  
-  Úkoly můžete upravit nebo přidávat nové, body slouží k výpočtu žebříčku.
-* **messages.json** – seznam povzbuzujících vět, které se náhodně zobrazují po splnění úkolu.
-* **README.md** – tento popis a návod k použití.
+| Soubor/Složka       | Účel |
+|---------------------|------|
+| **index.html**      | Úvodní stránka se seznamem účastníků. Každá karta vede na osobní stránku hráče. |
+| **tom.html** … **vlada.html** | Osobní stránky hráčů (Tom, Míra, Martin, Lukáš, Vláďa). Načítají úkoly a zobrazují žebříček. |
+| **style.css**       | Sdílené styly (tmavá paleta, červené akcenty, vzhled karet, avatarů atd.). |
+| **app.js**          | Logika aplikace: načítá úkoly a hlášky z JSON, inicializuje Firebase Realtime Database a aktualizuje skóre. |
+| **tasks.json**      | Seznam úkolů s bodovým ohodnocením a volitelným podúkolem. |
+| **messages.json**   | Povzbuzující hlášky, které se náhodně zobrazují po splnění úkolu. |
+| **avatars/**        | Složka pro obrázky účastníků. Soubor musí být pojmenován bez diakritiky stejně jako klíč v aplikaci (např. `tom.png`, `mira.png`). |
 
 ## Lokální spuštění
 
-Aplikaci můžete otevřít přímo z disku: stačí otevřít soubor `index.html` v libovolném moderním prohlížeči.  
-Seznam úkolů a hlášek se načte ze souborů `tasks.json` a `messages.json` v kořenovém adresáři.
+1. Zkontrolujte, že ve složce `avatars/` jsou obrázky všech účastníků pojmenované bez diakritiky (`tom.png`, `mira.png`, `martin.png`, `lukas.png`, `vlada.png`). Pokud obrázky nemáte, můžete použít zástupné obrázky nebo je nahradit později.
+2. Otevřete soubor `index.html` v moderním webovém prohlížeči.  
+3. Kliknutím na kartu hráče přejdete na jeho stránku. Úkoly a žebříček budou funkční i bez Firebase – body se však nebudou ukládat mezi relacemi.
 
-## Nasazení na GitHub Pages
+## Nasazení na GitHub Pages
 
-1. Vytvořte nový repozitář na GitHubu (např. `rozlucka-kluci`).
-2. Nahrajte soubory `index.html`, `tasks.json`, `messages.json` a `README.md` do kořene repozitáře.  
-   Nejjednodušší je použít tlačítko **Add files → Upload files** v GitHub rozhraní.
-3. Ve vašem repozitáři otevřete **Settings → Pages**.  
-   Nastavte zdroj na **Deploy from a branch** a vyberte větev `main` a složku `/` (root).  
-   Uložte nastavení; GitHub za chvíli vygeneruje stránku, která bude dostupná na adrese `https://<vaše_uživatelské_jméno>.github.io/<název_repozitáře>/`.
+1. Vytvořte repozitář na GitHubu (např. `rozlucka-kluci-app`).  
+2. Nahrajte všechny soubory a složky: `index.html`, `*.html` stránky hráčů, `style.css`, `app.js`, `tasks.json`, `messages.json` a složku `avatars/` s obrázky.  
+3. V nastavení repozitáře (Settings → Pages) vyberte **Deploy from a branch**, zvolte větev `main` a složku `/` (root).  
+4. Po uložení nastavení se během chvíle vygeneruje veřejná stránka, obvykle na adrese `https://<vaše_uživatelské_jméno>.github.io/<název_repozitáře>/`.
 
-## Konfigurace Firebase
+## Použití Firebase pro sdílený žebříček
 
-Pokud chcete sdílený žebříček napříč zařízeními, použijte [Firebase Realtime Database](https://firebase.google.com/).  
-V souboru `index.html` je již připravený kód pro zápis splněných úkolů do Firebase; stačí doplnit vlastní konfiguraci.
+Aby se body ukládaly a synchronizovaly mezi všemi zařízeními, je potřeba propojit aplikaci s [Firebase Realtime Database](https://firebase.google.com/).  
+Kód v `app.js` již obsahuje inicializaci Firebase; stačí vložit vlastní konfiguraci.
 
 ### Vytvoření projektu
 
-1. Přihlaste se na [console.firebase.google.com](https://console.firebase.google.com/).
-2. Klikněte na **Add project** (Přidat projekt) a projděte průvodcem.  
-   Můžete vypnout Google Analytics (není potřeba pro tuto aplikaci).
-3. Po vytvoření projektu v postranním menu vyberte **Realtime Database** a klikněte na **Create database**.  
-   Zvolte režim **Start in test mode** (testovací režim) a umístění (např. `europe-west`).
+1. Přihlaste se do [Firebase Console](https://console.firebase.google.com/).  
+2. Vytvořte nový projekt (bez Google Analytics).  
+3. V části **Build → Realtime Database** klikněte na **Create database** a zvolte režim **Start in test mode**. Vyberte region (např. `europe-west1`).
 
 ### Přidání webové aplikace
 
-1. V přehledu projektu klikněte na ikonu webu **</>** (Add app) a zvolte **Web**.
-2. Zadejte libovolný název aplikace (např. `rozlucka-kluci`) a nechte volbu hostingu vypnutou (není potřeba).  
-   Po potvrzení se zobrazí konfigurační objekt `firebaseConfig`.
-3. Zkopírujte celý obsah objektu a nahraďte jím placeholder `firebaseConfig` v souboru `index.html`.
+1. V přehledu projektu klikněte na ikonu webu **</>** (Add app) a vyberte **Web app**.  
+2. Zadejte název (např. `rozlucka-kluci-web`) a pokračujte bez hostingu.  
+3. Na další stránce se zobrazí konfigurace `firebaseConfig`. Uložte si hodnoty `apiKey`, `authDomain`, `databaseURL`, `projectId`, `storageBucket`, `messagingSenderId` a `appId`.
+4. Otevřete soubor `app.js` a v objektu `firebaseConfig` nahraďte placeholdery vašimi hodnotami.
 
-### Práce s databází
+Po této úpravě budou body přičítané v úkolu zapisovány do Firebase a sdílený žebříček bude aktualizován v reálném čase.
 
-Aplikace zapisuje každý splněný úkol do cesty `completions`.  
-V databázi tak vzniknou záznamy se jménem hráče, ID úkolu, počtem bodů a časovou značkou.  
-V případě potřeby můžete v kódu implementovat i čtení z databáze a sdílený žebříček pro více zařízení.
+## Úpravy obsahu
 
-## Přizpůsobení
-
-* **Seznam hráčů** – v souboru `index.html` je pole `players` s výchozími jmény.  
-  Upravte jej podle skutečných účastníků (bez diakritiky).
-* **Styling** – barvy, fonty nebo rozložení můžete upravit v hlavičce souboru `index.html` v rámci `<style>`.
-* **Úkoly a hlášky** – editujte soubory `tasks.json` a `messages.json` pro vlastní obsah.
+* **Seznam hráčů** – v `app.js` jsou definovány tři konstanty: `players` (seznam zobrazovaných jmen), `nameKeyMap` (mapování jména na klíč bez diakritiky) a `playerImages` (cesta k avatarům). Upravte je podle skutečných účastníků.
+* **Úkoly a body** – editujte `tasks.json`: pole objektů s `id`, `text`, `subtask` (nebo `null`) a `points`.  
+  Podúkoly se zobrazují jako podřazené položky a udělují 5 bodů; hodnotu lze změnit v `app.js`.
+* **Povzbuzující hlášky** – upravte `messages.json` podle vašich preferencí.
+* **Styling** – barvy, písma a rozložení jsou definovány ve `style.css`. Můžete je přizpůsobit tak, aby seděly k vašemu tématu (např. elegantní, sportovní, fantasy...).
 
 Přejeme hodně zábavy a co nejméně trapasů! 😉

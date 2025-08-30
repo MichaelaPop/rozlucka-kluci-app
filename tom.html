@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rozlučka – Tom</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="style.css" />
+  <!-- Firebase libraries -->
+  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-database.js"></script>
+  <!-- App logic -->
+  <script src="app.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header with avatar and participant name -->
+    <div class="header-container">
+      <img src="avatars/tom.png" alt="Tom" class="avatar-large" />
+      <h1>Rozlučka – <span id="participant-name">Tom</span></h1>
+    </div>
+    <!-- Card with tasks and motivational message -->
+    <div class="card">
+      <h2>Úkoly</h2>
+      <div id="tasks-list"></div>
+      <div id="motivational-message" class="message"></div>
+    </div>
+    <!-- Card with scoreboard -->
+    <div class="card">
+      <h2>Skóre</h2>
+      <table id="scoreboard">
+        <thead>
+          <tr><th>Jméno</th><th>Body</th></tr>
+        </thead>
+        <tbody id="scoreboard-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    // Wait for tasks and messages to load then set up the page
+    loadTasks().then(() => {
+      loadMessages().then(() => {
+        setupPage('Tom');
+      });
+    });
+  </script>
+</body>
+</html>
