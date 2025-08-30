@@ -35,12 +35,14 @@ const nameKeyMap = {
 };
 
 // Mapping of display names to avatar images
+// Mapping of display names to avatar images stored in the repository root.
+// These filenames match the existing image files in the GitHub repository (e.g. Tom.png).
 const playerImages = {
-  "Tom": "avatars/tom.png",
-  "Míra": "avatars/mira.png",
-  "Martin": "avatars/martin.png",
-  "Lukáš": "avatars/lukas.png",
-  "Vláďa": "avatars/vlada.png"
+  "Tom": "Tom.png",
+  "Míra": "Mira.png",
+  "Martin": "Martin.png",
+  "Lukáš": "Lukas.png",
+  "Vláďa": "Vlada.png"
 };
 
 // Containers for tasks and motivational messages
